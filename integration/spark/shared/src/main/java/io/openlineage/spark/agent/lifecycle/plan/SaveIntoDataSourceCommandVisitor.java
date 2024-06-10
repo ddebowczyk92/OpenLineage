@@ -8,26 +8,28 @@ package io.openlineage.spark.agent.lifecycle.plan;
 import static io.openlineage.client.OpenLineage.LifecycleStateChangeDatasetFacet.LifecycleStateChange.CREATE;
 import static io.openlineage.client.OpenLineage.LifecycleStateChangeDatasetFacet.LifecycleStateChange.OVERWRITE;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import io.openlineage.client.OpenLineage;
 import io.openlineage.client.OpenLineage.LifecycleStateChangeDatasetFacet.LifecycleStateChange;
 import io.openlineage.client.OpenLineage.OutputDataset;
 import io.openlineage.client.utils.DatasetIdentifier;
+import io.openlineage.spark.agent.lifecycle.SparkExtensionVisitorWrapper;
 import io.openlineage.spark.agent.util.DatasetFacetsUtils;
-import io.openlineage.spark.agent.util.ExtensionPlanUtils;
 import io.openlineage.spark.agent.util.PathUtils;
 import io.openlineage.spark.agent.util.PlanUtils;
 import io.openlineage.spark.agent.util.ScalaConversionUtils;
 import io.openlineage.spark.api.AbstractQueryPlanDatasetBuilder;
 import io.openlineage.spark.api.JobNameSuffixProvider;
 import io.openlineage.spark.api.OpenLineageContext;
-import io.openlineage.spark.extension.scala.v1.LineageRelationProvider;
+// import io.openlineage.spark.extension.scala.v1.LineageRelationProvider;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +58,7 @@ public class SaveIntoDataSourceCommandVisitor
         SparkListenerEvent, SaveIntoDataSourceCommand, OutputDataset>
     implements JobNameSuffixProvider<SaveIntoDataSourceCommand> {
 
+  private final SparkExtensionVisitorWrapper sparkExtensionVisitorWrapper = SparkExtensionVisitorWrapper.getInstance();
   public SaveIntoDataSourceCommandVisitor(OpenLineageContext context) {
     super(context, false);
   }
@@ -69,7 +72,7 @@ public class SaveIntoDataSourceCommandVisitor
         return false;
       }
       return command.dataSource() instanceof SchemaRelationProvider
-          || command.dataSource() instanceof LineageRelationProvider
+          || sparkExtensionVisitorWrapper.isDefinedAt(command.dataSource())
           || command.dataSource() instanceof RelationProvider;
     }
     return false;
@@ -95,16 +98,12 @@ public class SaveIntoDataSourceCommandVisitor
   public List<OutputDataset> apply(SparkListenerEvent event, SaveIntoDataSourceCommand command) {
     BaseRelation relation;
 
-    if (command.dataSource() instanceof LineageRelationProvider) {
-      LineageRelationProvider provider = (LineageRelationProvider) command.dataSource();
+    if (sparkExtensionVisitorWrapper.isDefinedAt(command.dataSource())) {
+      DatasetIdentifier datasetIdentifier = sparkExtensionVisitorWrapper.apply(command.dataSource(), event.getClass().getName(),
+              context.getSparkSession().get().sqlContext(), command.options());
       return Collections.singletonList(
           outputDataset()
-              .getDataset(
-                  provider.getLineageDatasetIdentifier(
-                      ExtensionPlanUtils.context(event, context),
-                      context.getSparkSession().get().sqlContext(),
-                      command.options()),
-                  getSchema(command)));
+              .getDataset(datasetIdentifier, getSchema(command)));
     }
 
     // Kafka has some special handling because the Source and Sink relations require different
@@ -235,16 +234,7 @@ public class SaveIntoDataSourceCommandVisitor
 
   @SuppressWarnings("PMD.AvoidDuplicateLiterals")
   public Optional<String> jobNameSuffix(SaveIntoDataSourceCommand command) {
-    if (command.dataSource() instanceof LineageRelationProvider) {
-      LineageRelationProvider provider = (LineageRelationProvider) command.dataSource();
-      return Optional.ofNullable(
-              provider.getLineageDatasetIdentifier(
-                  ExtensionPlanUtils.contextWithoutListenerEvent(context),
-                  context.getSparkSession().get().sqlContext(),
-                  command.options()))
-          .map(DatasetIdentifier::getName)
-          .map(n -> trimPath(n));
-    } else if (command.dataSource().getClass().getName().contains("DeltaDataSource")
+    if (command.dataSource().getClass().getName().contains("DeltaDataSource")
         && command.options().contains("path")) {
       return Optional.of(trimPath(command.options().get("path").get()));
     } else if (KustoRelationVisitor.isKustoSource(command.dataSource())) {

@@ -22,7 +22,7 @@ import io.openlineage.spark.agent.Versions;
 import io.openlineage.spark.agent.util.ScalaConversionUtils;
 import io.openlineage.spark.api.DatasetFactory;
 import io.openlineage.spark.api.OpenLineageContext;
-import io.openlineage.spark.extension.scala.v1.LineageRelationProvider;
+// import io.openlineage.spark.extension.scala.v1.LineageRelationProvider;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
