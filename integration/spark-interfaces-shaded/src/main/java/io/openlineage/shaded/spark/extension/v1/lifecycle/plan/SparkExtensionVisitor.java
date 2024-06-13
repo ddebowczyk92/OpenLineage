@@ -1,10 +1,10 @@
-package io.openlineage.spark.extension.v1.lifecycle.plan;
+package io.openlineage.shaded.spark.extension.v1.lifecycle.plan;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.openlineage.client.OpenLineage;
 import io.openlineage.client.utils.DatasetIdentifier;
-import io.openlineage.spark.extension.v1.LineageRelationProvider;
+import io.openlineage.shaded.spark.extension.v1.LineageRelationProvider;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;

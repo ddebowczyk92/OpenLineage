@@ -211,9 +211,9 @@ shadowJar {
         exclude 'io/openlineage/client/transports/**'
     }
 
-    relocate('io.openlineage.client', 'io.openlineage.client.shaded')
-    relocate('io.openlineage.server', 'io.openlineage.server.shaded')
-    relocate('com.fasterxml', 'io.openlineage.com.fasterxml.shaded')
+    relocate('io.openlineage.client', 'io.openlineage.shaded.client')
+    relocate('io.openlineage.server', 'io.openlineage.shaded.server')
+    relocate('com.fasterxml', 'io.openlineage.shaded.com.fasterxml')
 
     archiveClassifier = ''
     // avoid conflict with any client version of that lib

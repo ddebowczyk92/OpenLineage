@@ -1,4 +1,4 @@
-package io.openlineage.spark.extension.v1;
+package io.openlineage.unshaded.spark.extension.v1;
 
 public interface LineageExtensionProvider {
 
