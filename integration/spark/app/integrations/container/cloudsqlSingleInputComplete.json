@@ -1,0 +1,84 @@
+{
+  "eventType": "COMPLETE",
+  "job": {
+    "namespace": "google-cloud-namespace",
+    "name": "google_cloud_sql_integration_test.execute_save_into_data_source_command.second_ol_clients"
+  },
+  "inputs": [
+    {
+      "name": "e2etest.ol_clients",
+      "facets": {
+        "schema": {
+          "fields": [
+            {
+              "name": "client_name",
+              "type": "string"
+            },
+            {
+              "name": "client_category",
+              "type": "string"
+            },
+            {
+              "name": "client_rating",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "name": "e2etest.second_ol_clients",
+      "facets": {
+        "schema": {
+          "fields": [
+            {
+              "name": "client_name",
+              "type": "string"
+            },
+            {
+              "name": "client_category",
+              "type": "string"
+            },
+            {
+              "name": "client_rating",
+              "type": "string"
+            }
+          ]
+        },
+        "columnLineage": {
+          "fields": {
+            "client_name": {
+              "inputFields": [
+                {
+                  "name": "e2etest.ol_clients",
+                  "field": "client_name"
+                }
+              ]
+            },
+            "client_category": {
+              "inputFields": [
+                {
+                  "name": "e2etest.ol_clients",
+                  "field": "client_category"
+                }
+              ]
+            },
+            "client_rating": {
+              "inputFields": [
+                {
+                  "name": "e2etest.ol_clients",
+                  "field": "client_rating"
+                }
+              ]
+            }
+          }
+        },
+        "lifecycleStateChange": {
+          "lifecycleStateChange": "OVERWRITE"
+        }
+      }
+    }
+  ]
+}

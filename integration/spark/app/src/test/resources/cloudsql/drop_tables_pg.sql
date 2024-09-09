@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS jdbc_source1;
+DROP TABLE IF EXISTS jdbc_source2;
+DROP TABLE IF EXISTS jdbc_source3;
+DROP TABLE IF EXISTS jdbc_source4;
+DROP TABLE IF EXISTS ol_clients;
+DROP TABLE IF EXISTS second_ol_clients;
+DROP TABLE IF EXISTS test;

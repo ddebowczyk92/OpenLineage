@@ -144,6 +144,29 @@ public class SparkContainerUtils {
         .withNetwork(network);
   }
 
+  static GenericContainer<?> makeCloudSqlProxyContainer(
+      Path pathToServiceKey, String instanceName) {
+    GenericContainer<?> container =
+        new GenericContainer<>(
+                DockerImageName.parse("gcr.io/cloud-sql-connectors/cloud-sql-proxy")
+                    .withTag("2.12.0"))
+            .withNetworkAliases("cloud-sql-proxy")
+            .withStartupTimeout(Duration.of(10, ChronoUnit.MINUTES))
+            .withExposedPorts(5432)
+            .waitingFor(Wait.forLogMessage(".*The proxy has started.*", 1))
+            .withLogConsumer(SparkContainerUtils::consumeOutput)
+            .withCommand(
+                "--address",
+                "0.0.0.0",
+                "--port",
+                "5432",
+                "--credentials-file",
+                "/path/to/service-account-key.json",
+                instanceName);
+    mountPath(container, pathToServiceKey, Paths.get("/path/to/service-account-key.json"));
+    return container;
+  }
+
   static GenericContainer<?> makePysparkContainerWithDefaultConf(
       Network network,
       MockServerContainer mockServerContainer,

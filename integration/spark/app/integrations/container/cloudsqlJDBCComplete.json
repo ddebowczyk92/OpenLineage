@@ -1,0 +1,88 @@
+{
+  "eventType": "COMPLETE",
+  "job": {
+    "namespace": "google-cloud-namespace",
+    "name": "google_cloud_sql_integration_test.execute_save_into_data_source_command.test"
+  },
+  "inputs": [
+    {
+      "name": "e2etest.jdbc_source1",
+      "facets": {
+        "schema": {
+          "fields": [
+            {
+              "name": "k",
+              "type": "integer"
+            },
+            {
+              "name": "j1",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "inputFacets": {}
+    },
+    {
+      "name": "e2etest.jdbc_source2",
+      "facets": {
+        "schema": {
+          "fields": [
+            {
+              "name": "j2",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "inputFacets": {}
+    }
+  ],
+  "outputs": [
+    {
+      "name": "e2etest.test",
+      "facets": {
+        "schema": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ]
+        },
+        "columnLineage": {
+          "fields": {
+            "value": {
+              "inputFields": [
+                {
+                  "name": "e2etest.jdbc_source2",
+                  "field": "j2",
+                  "transformations": [
+                    {
+                      "type": "DIRECT",
+                      "subtype": "IDENTITY",
+                      "description": "",
+                      "masking": false
+                    }
+                  ]
+                },
+                {
+                  "name": "e2etest.jdbc_source1",
+                  "field": "j1",
+                  "transformations": [
+                    {
+                      "type": "DIRECT",
+                      "subtype": "IDENTITY",
+                      "description": "",
+                      "masking": false
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}
