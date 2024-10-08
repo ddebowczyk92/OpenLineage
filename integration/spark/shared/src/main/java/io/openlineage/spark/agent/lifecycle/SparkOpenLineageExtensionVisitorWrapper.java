@@ -15,6 +15,8 @@ import io.openlineage.client.utils.DatasetIdentifier;
 import io.openlineage.client.utils.DatasetIdentifier.Symlink;
 import io.openlineage.spark.api.SparkOpenLineageConfig;
 import io.openlineage.spark.extension.OpenLineageExtensionProvider;
+
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.xbean.finder.ResourceFinder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -189,17 +192,21 @@ public final class SparkOpenLineageExtensionVisitorWrapper {
     return Optional.empty();
   }
 
-  private static List<Object> init(String testExtensionProvider)
-      throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+  private List<Object> init(String testExtensionProvider)
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
     List<Object> objects = new ArrayList<>();
-    ServiceLoader<OpenLineageExtensionProvider> serviceLoader =
-        ServiceLoader.load(OpenLineageExtensionProvider.class);
-    for (OpenLineageExtensionProvider service : serviceLoader) {
-      String className = service.getVisitorClassName();
+    ClassLoader classLoader = this.getClass().getClassLoader();
+    Class.forName("io.openlineage.spark.extension.OpenLineageExtensionProvider");
+    ResourceFinder finder = new ResourceFinder("META-INF/services/", classLoader);
+
+    List<Class<? extends OpenLineageExtensionProvider>> impls = finder.findAllImplementations(OpenLineageExtensionProvider.class);
+    for (Class<? extends OpenLineageExtensionProvider> impl : impls) {
+      OpenLineageExtensionProvider provider = impl.newInstance();
+      String className = provider.getVisitorClassName();
       if (testExtensionProvider == null) {
         final Object classInstance = getClassInstance(className);
         objects.add(classInstance);
-      } else if (testExtensionProvider.equals(service.getClass().getCanonicalName())) {
+      } else if (testExtensionProvider.equals(provider.getClass().getCanonicalName())) {
         Object classInstance = getClassInstance(className);
         objects.add(classInstance);
         break;

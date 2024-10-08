@@ -63,6 +63,7 @@ dependencies {
         exclude(group: "com.fasterxml.jackson.core")
         exclude(group: "com.fasterxml.jackson.module")
     }
+    implementation("org.apache.xbean:xbean-finder:4.25")
 
     // TODO: Convert these to testImplementation
     testFixturesApi(platform("org.junit:junit-bom:${junit5Version}"))
@@ -120,6 +121,8 @@ dependencies {
         exclude(group: "com.fasterxml.jackson.module")
     }
 
+    scala212Implementation("org.apache.xbean:xbean-finder:4.25")
+
     testScala212Implementation("org.apache.spark:spark-hive_2.12:${sparkVersion}")
     testScala212Implementation("org.apache.spark:spark-sql-kafka-0-10_2.12:${sparkVersion}")
     testScala212Implementation("org.apache.spark:spark-sql_2.12:${sparkVersion}")
@@ -176,6 +179,8 @@ dependencies {
         exclude(group: "com.fasterxml.jackson.core")
         exclude(group: "com.fasterxml.jackson.module")
     }
+
+    scala213Implementation("org.apache.xbean:xbean-finder:4.25")
 
     testScala213Implementation("org.apache.spark:spark-hive_2.13:${sparkVersion}")
     testScala213Implementation("org.apache.spark:spark-sql-kafka-0-10_2.13:${sparkVersion}")
