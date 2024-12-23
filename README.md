@@ -35,11 +35,12 @@ This integration supports a wide range of Hive query types, including:
   SemanticAnalyzer. It traverses the plan's Abstract Syntax Tree (AST) to
   identify input and output datasets, as well as the transformations performed
   on the data. It leverages a custom parser (separate from Hive's parser) for
-  more advanced column level lineage analysis.
+  more advanced column-level lineage analysis.
 * OpenLineage Event Generation: Based on the query plan analysis, the hook
   constructs OpenLineage events, capturing the data lineage information. Events
   include details about the job, datasets (inputs and outputs), and the
-  relationships between them.
+  relationships between them.  The resulting OpenLineage event will be of type
+  `COMPLETE` for successful queries and `FAIL` for failed queries.
 * Transport: The events are then sent to the configured transport.
 * Dataplex Integration (Optional): If configured with the `gcplineage`
   transport, the OpenLineage events are published to Dataplex, creating a
@@ -58,6 +59,13 @@ relevant configuration options include:
 * `hive.openlineage.namespace`: Defines the namespace for the OpenLineage job.
 * `hive.openlineage.job.name`: Specifies the name of the OpenLineage job. Useful
   for filtering data in your lineage visualization tool
+* `hive.exec.post.hooks` and `hive.exec.failure.hooks`:  The Hive hook can be
+  enabled for both successful and failed queries. This is configured using the
+  following Hive properties:
+  ```properties
+  hive.exec.post.hooks=io.openlineage.hive.hooks.HiveOpenLineageHook
+  hive.exec.failure.hooks=io.openlineage.hive.hooks.HiveOpenLineageHook
+  ```
 
 ## Getting started
 
