@@ -1,4 +1,4 @@
-FROM ubuntu as unarchive
+FROM ubuntu:24.04 as unarchive
 ONBUILD COPY hadoop-*.tar.gz /opt
 ONBUILD COPY apache-hive-*-bin.tar.gz /opt
 ONBUILD COPY apache-tez-*-bin.tar.gz /opt
