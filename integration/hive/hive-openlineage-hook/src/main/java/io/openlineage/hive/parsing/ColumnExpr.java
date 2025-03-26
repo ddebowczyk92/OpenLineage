@@ -20,6 +20,7 @@ public class ColumnExpr extends BaseExpr {
   private BaseExpr expression;
 
   public ColumnExpr(String name) {
+    super();
     this.name = name;
   }
 

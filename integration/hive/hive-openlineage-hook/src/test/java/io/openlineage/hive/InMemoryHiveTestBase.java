@@ -52,7 +52,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 
-public abstract class InMemoryHiveTestBase {
+public class InMemoryHiveTestBase {
 
   public static HiveConf hiveConf = new HiveConf();
   public static QueryState queryState;

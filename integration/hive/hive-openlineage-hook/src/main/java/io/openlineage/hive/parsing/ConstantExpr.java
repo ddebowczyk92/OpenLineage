@@ -12,6 +12,7 @@ public class ConstantExpr extends BaseExpr {
   private final Object value;
 
   public ConstantExpr(Object value) {
+    super();
     this.value = value;
   }
 

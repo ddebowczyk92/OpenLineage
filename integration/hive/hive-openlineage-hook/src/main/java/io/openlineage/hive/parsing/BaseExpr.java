@@ -8,7 +8,7 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public abstract class BaseExpr {
+public class BaseExpr {
 
   private List<BaseExpr> children;
 
