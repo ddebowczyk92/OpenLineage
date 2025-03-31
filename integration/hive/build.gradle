@@ -197,6 +197,11 @@ shadowJar {
         exclude(dependency("org.slf4j::"))
         exclude("org/apache/commons/logging/**")
         exclude("io/openlineage/server/**")
+        exclude("javax/**")
+        exclude("com/google/**")
+        exclude("org/checkerframework/**")
+        exclude("org/publicsuffix/**")
+        exclude("org/slf4j/**")
     }
 
     relocate "com.github.ok2c.hc5", "io.openlineage.hive.shaded.com.github.ok2c.hc5"
